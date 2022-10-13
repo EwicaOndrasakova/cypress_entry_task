@@ -1,9 +1,8 @@
 import SearchFlights from "../support/SearchFlights.js";
-import SearchFlightsView from "../support/SearchFlightsView.js";
-import "cypress-wait-until";
+import FlightsList from "../support/FlightsList.js";
 
 const searchFlights = new SearchFlights();
-const searchFlightsView = new SearchFlightsView();
+const flightsList = new FlightsList();
 const mainDestination = "Dublin, Írsko";
 const destination = "Dublin";
 const button = '[type="button"]';
@@ -18,23 +17,39 @@ describe("Test for Kiwi Cypress weekend", () => {
 
   Cypress._.times(10, () => {
     it("The flight to Dublin is found", () => {
+      searchFlights.destinationInput().click().type(destination);
       searchFlights
-        .clickOnDestinationInput(destination)
-        .selectDestinationsList(mainDestination)
-        .clickOnAddPassengerAndBagsButton()
-        .addOnePassenger(button)
-        .uncheckBookingCheckbox()
-        .clickOnSearchButton();
+        .destinationPlacePicker()
+        .contains(mainDestination)
+        .click({ timeout: 15000 });
 
-      searchFlightsView
-        .clikOnSortByPriceButton()
-        .destinationFieldContainsDestination(destination)
-        .countOfPassengers(twoPassengers)
-        .firstResultCardContainsDestination(destination)
-        .clickOnBookingButton()
-        .visibleMagicLoginModal()
-        .clickOnContinueWithoutLoginButton()
-        .reservationHeadContainsDestination(destination);
+      searchFlights.addPassengerAndBagsButton().click();
+      searchFlights.addOnePassengerButton().find(button).eq("1").click();
+      searchFlights
+        .bookingCheckbox()
+        .uncheck({ force: true })
+        .should("not.be.checked");
+      searchFlights.searchFlightsButton().click();
+
+      flightsList.sortByPriceButton().contains("Najlacnejšie").click();
+      flightsList.destinationFieldContainsDestination(destination);
+      flightsList.countOfPassengers().contains(twoPassengers);
+      flightsList
+        .firstResultCardContains()
+        .should("be.visible")
+        .first()
+        .contains(destination);
+      flightsList
+        .bookingButton()
+        .first()
+        .contains("Rezervovať")
+        .click({ force: true });
+      flightsList.visibleMagicLoginModal().should("be.visible");
+      flightsList.continueWithoutLoginButton().click();
+      flightsList
+        .reservationHead()
+        .should("be.visible", { timeout: 5000 })
+        .should("contain.text", destination, { timeout: 5000 });
     });
   });
 });

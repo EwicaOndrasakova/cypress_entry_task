@@ -1,36 +1,22 @@
 export default class SearchFlights {
-  clickOnDestinationInput(destination) {
-    const destinationInput = cy.get(
-      '[data-test="SearchPlaceField-destination"]'
+  destinationInput() {
+    return cy.get(
+      '[data-test="PlacePickerInput-destination"] > [data-test="SearchField-input"]'
     );
-    destinationInput.find('[data-test="SearchField-input"]', { timeout: 5000 });
-    destinationInput.should("be.visible").type(destination);
-    return this;
   }
-  selectDestinationsList(mainDestination) {
-    const destinationDublin = cy.get('[data-test="PlacePickerRow-wrapper"]');
-    destinationDublin.contains(mainDestination);
-    destinationDublin.click({ timeout: 5000 });
-    return this;
+  destinationPlacePicker() {
+    return cy.get('[data-test="PlacePickerRow-wrapper"]');
   }
-  clickOnAddPassengerAndBagsButton() {
-    const addPassengerAndBagsButton = cy.get('[data-test="PassengersField"]');
-    addPassengerAndBagsButton.click();
-    return this;
+  addPassengerAndBagsButton() {
+    return cy.get('[data-test="PassengersField"]');
   }
-  addOnePassenger(button) {
-    const onePassenger = cy.get('[data-test="PassengersRow-adults"]');
-    onePassenger.find(button).eq("1").click();
-    return this;
+  addOnePassengerButton() {
+    return cy.get('[data-test="PassengersRow-adults"]');
   }
-  uncheckBookingCheckbox() {
-    const bookingCheckbox = cy.get('[type="checkbox"]');
-    bookingCheckbox.uncheck({ force: true }).should("not.be.checked");
-    return this;
+  bookingCheckbox() {
+    return cy.get('[type="checkbox"]');
   }
-  clickOnSearchButton() {
-    const searchButton = cy.get('[data-test="LandingSearchButton"]');
-    searchButton.click();
-    return this;
+  searchFlightsButton() {
+    return cy.get('[data-test="LandingSearchButton"]');
   }
 }
